@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class ProductService {
 
-  // URL de la API, asegúrate de que sea correcta
+  // URL de la API, 
   private readonly API_URL = 'http://localhost:3000/api/hoteles';
 
   constructor(private http: HttpClient) { }
