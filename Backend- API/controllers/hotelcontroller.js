@@ -1,12 +1,14 @@
 const Hotel = require('../models/hotel');
 const { body, validationResult } = require('express-validator');
-const jwt = require('jsonwebtoken');
 
 // Crear Hotel
 exports.crearHotel = [
   body('nombre').notEmpty().withMessage('El nombre es obligatorio'),
   body('ciudad').notEmpty().withMessage('La ciudad es obligatoria'),
-  // Agregar más validaciones según tus necesidades
+  body('precio')
+    .isNumeric().withMessage('El precio debe ser un número')
+    .notEmpty().withMessage('El precio es obligatorio'),
+  body('imagenUrl').notEmpty().withMessage('La URL de la imagen es obligatoria'),
 
   async (req, res) => {
     const errors = validationResult(req);
@@ -15,11 +17,19 @@ exports.crearHotel = [
     }
 
     try {
-      const { nombre, ciudad } = req.body;
-      const nuevoHotel = new Hotel({ nombre, ciudad });
+      const { nombre, ciudad, direccion, precio, rating, imagenUrl } = req.body;
+      const nuevoHotel = new Hotel({ 
+        nombre,
+        ciudad,
+        direccion,
+        precio,
+        rating,
+        imagenUrl
+      });
       const hotelGuardado = await nuevoHotel.save();
       res.status(201).json(hotelGuardado);
     } catch (error) {
+      console.error('Error al crear el hotel:', error);
       res.status(500).json({ error: 'Error al crear el hotel' });
     }
   },
@@ -36,20 +46,21 @@ exports.listarHoteles = async (req, res) => {
       .skip(skip)
       .limit(parseInt(limit));
 
-    res.json(hoteles); 
+    res.json(hoteles);
   } catch (error) {
+    console.error('Error al listar hoteles:', error);
     res.status(500).json({ error: 'Error al obtener la lista de hoteles' });
   }
 };
 
 // Obtener estadísticas de los hoteles
 exports.obtenerEstadisticas = async (req, res) => {
-  // Implementar lógica para obtener estadísticas
   try {
     // Ejemplo: contar la cantidad de hoteles
     const totalHoteles = await Hotel.countDocuments();
     res.json({ totalHoteles });
   } catch (error) {
+    console.error('Error al obtener estadísticas:', error);
     res.status(500).json({ error: 'Error al obtener las estadísticas' });
   }
 };
@@ -59,15 +70,16 @@ exports.filtrarHoteles = async (req, res) => {
   const { location, priceMin, priceMax, rating } = req.query;
   const query = {};
 
-  if (location) query.location = location;
-  if (priceMin) query.price = { $gte: priceMin };
-  if (priceMax) query.price = { ...query.price, $lte: priceMax };
-  if (rating) query.rating = { $gte: rating };
+  if (location) query.ciudad = location;
+  if (priceMin) query.precio = { $gte: parseFloat(priceMin) };
+  if (priceMax) query.precio = { ...query.precio, $lte: parseFloat(priceMax) };
+  if (rating) query.rating = { $gte: parseFloat(rating) };
 
   try {
     const hoteles = await Hotel.find(query);
     res.json(hoteles);
   } catch (error) {
+    console.error('Error al filtrar hoteles:', error);
     res.status(500).json({ error: 'Error al filtrar hoteles' });
   }
 };
@@ -84,6 +96,7 @@ exports.actualizarHotel = async (req, res) => {
     }
     res.json(hotelActualizado);
   } catch (error) {
+    console.error('Error al actualizar hotel:', error);
     res.status(500).json({ error: 'Error al actualizar el hotel' });
   }
 };
@@ -99,6 +112,7 @@ exports.eliminarHotel = async (req, res) => {
     }
     res.json({ message: 'Hotel eliminado correctamente' });
   } catch (error) {
+    console.error('Error al eliminar hotel:', error);
     res.status(500).json({ error: 'Error al eliminar el hotel' });
   }
 };
@@ -112,23 +126,7 @@ exports.buscarHoteles = async (req, res) => {
     const hoteles = await Hotel.find({ nombre: regex });
     res.json(hoteles);
   } catch (error) {
+    console.error('Error al buscar hoteles:', error);
     res.status(500).json({ error: 'Error al buscar hoteles' });
-  }
-};
-
-// Middleware para verificar autenticación
-exports.verificarAutenticacion = (req, res, next) => {
-  const token = req.headers.authorization;
-
-  if (!token) {
-    return res.status(401).json({ error: 'Token no proporcionado' });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    res.status(401).json({ error: 'Token inválido' });
   }
 };

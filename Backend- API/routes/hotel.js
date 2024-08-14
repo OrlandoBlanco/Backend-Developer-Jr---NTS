@@ -11,11 +11,10 @@ const {
   actualizarHotel, 
   eliminarHotel, 
   obtenerEstadisticas, 
-  buscarHoteles, 
-  verificarAutenticacion 
-} = require('../controllers/hotelController');
+  buscarHoteles,  
+} = require('../controllers/hotelcontroller');
 
-// Rutas
+// Ruta para cargar una imagen
 router.post('/imagen', upload.single('imagen'), (req, res) => {
   // Guardar la referencia a la imagen en la base de datos
   // req.file contiene la información de la imagen subida
@@ -32,13 +31,13 @@ router.get('/', listarHoteles);
 router.get('/filtrar', filtrarHoteles);
 
 // Ruta para crear un nuevo hotel (requiere autenticación)
-router.post('/', verificarAutenticacion, crearHotel);
+router.post('/', crearHotel);
 
 // Ruta para actualizar un hotel existente
-router.put('/:id', actualizarHotel);
+router.put('/:id',  actualizarHotel);
 
 // Ruta para eliminar un hotel
-router.delete('/:id', eliminarHotel);
+router.delete('/:id',  eliminarHotel);
 
 // Ruta para buscar hoteles por nombre
 router.get('/buscar', buscarHoteles);

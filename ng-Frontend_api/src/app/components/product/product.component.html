@@ -1,8 +1,8 @@
-<div style="padding: 50px;">
+<div class="container">
   <h1 class="text-center">Hoteles Vermont!</h1>
 
   <!-- Formulario de Filtros -->
-  <form (ngSubmit)="applyFilters()" class="filter-form">
+  <form (ngSubmit)="applyFilters()" class="hotel-filter">
     <div class="form-group">
       <label for="name">Nombre:</label>
       <input id="name" type="text" [(ngModel)]="filters.name" name="name" class="form-control" placeholder="Filtrar por nombre">
@@ -26,9 +26,65 @@
     <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
   </form>
 
+  <!-- Formulario de Crear Hotel -->
+  <div class="hotel-form-container mt-4">
+    <h2>Crear Nuevo Hotel</h2>
+    <form (ngSubmit)="createHotel()" class="hotel-form">
+      <div class="form-group">
+        <label for="newName">Nombre:</label>
+        <input id="newName" type="text" [(ngModel)]="newHotel.nombre" name="newName" class="form-control" placeholder="Nombre del hotel" required>
+      </div>
+      <div class="form-group">
+        <label for="newLocation">Ubicación:</label>
+        <input id="newLocation" type="text" [(ngModel)]="newHotel.ciudad" name="newLocation" class="form-control" placeholder="Ubicación del hotel" required>
+      </div>
+      <div class="form-group">
+        <label for="newPrice">Precio:</label>
+        <input id="newPrice" type="number" [(ngModel)]="newHotel.precio" name="newPrice" class="form-control" placeholder="Precio del hotel" required>
+      </div>
+      <div class="form-group">
+        <label for="newRating">Rating:</label>
+        <input id="newRating" type="number" [(ngModel)]="newHotel.rating" name="newRating" class="form-control" placeholder="Calificación del hotel" required>
+      </div>
+      <div class="form-group">
+        <label for="newImage">Imagen URL:</label>
+        <input id="newImage" type="text" [(ngModel)]="newHotel.imagenUrl" name="newImage" class="form-control" placeholder="URL de la imagen" required>
+      </div>
+      <button type="submit" class="btn btn-success">Crear Hotel</button>
+    </form>
+  </div>
+
+  <!-- Formulario de Actualizar Hotel -->
+  <div class="hotel-form-container mt-4" *ngIf="editHotel._id">
+    <h2>Actualizar Hotel</h2>
+    <form (ngSubmit)="updateHotel()" class="hotel-form">
+      <div class="form-group">
+        <label for="editName">Nombre:</label>
+        <input id="editName" type="text" [(ngModel)]="editHotel.nombre" name="editName" class="form-control" placeholder="Nombre del hotel" required>
+      </div>
+      <div class="form-group">
+        <label for="editLocation">Ubicación:</label>
+        <input id="editLocation" type="text" [(ngModel)]="editHotel.ciudad" name="editLocation" class="form-control" placeholder="Ubicación del hotel" required>
+      </div>
+      <div class="form-group">
+        <label for="editPrice">Precio:</label>
+        <input id="editPrice" type="number" [(ngModel)]="editHotel.precio" name="editPrice" class="form-control" placeholder="Precio del hotel" required>
+      </div>
+      <div class="form-group">
+        <label for="editRating">Calificación:</label>
+        <input id="editRating" type="number" [(ngModel)]="editHotel.rating" name="editRating" class="form-control" placeholder="Calificación del hotel" required>
+      </div>
+      <div class="form-group">
+        <label for="editImage">URL de Imagen:</label>
+        <input id="editImage" type="text" [(ngModel)]="editHotel.imagenUrl" name="editImage" class="form-control" placeholder="URL de la imagen" required>
+      </div>
+      <button type="submit" class="btn btn-warning">Actualizar Hotel</button>
+    </form>
+  </div>
+
   <!-- Tabla de Hoteles -->
-  <table class="table table-hover">
-    <thead class="table-danger">
+  <table class="table table-hover mt-4">
+    <thead class="table-dark">
       <tr>
         <th scope="col">#</th>
         <th scope="col">Nombre</th>
@@ -36,16 +92,17 @@
         <th scope="col">Precio</th>
         <th scope="col">Calificación</th>
         <th scope="col">Imagen</th>
+        <th scope="col">Acciones</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of filteredList; let i = index">
-        <th scope="row">{{ item.id }}</th>
-        <td>{{ item.name }}</td>
-        <td>{{ item.location }}</td>
+      <tr *ngFor="let item of filteredList; let i = index" class="hotel-item">
+        <th scope="row">{{ item._id }}</th>
+        <td>{{ item.nombre }}</td>
+        <td>{{ item.ciudad }}</td>
         <td>
           <span class="badge bg-success">
-            {{ item.price | currency }}
+            {{ item.precio | currency }}
           </span>
         </td>
         <td>
@@ -54,9 +111,14 @@
           </span>
         </td>
         <td>
-          <img width="50" height="60" [src]="item.imageUrl" alt="Hotel Image">
+          <img width="50" height="60" [src]="item.imagenUrl" alt="Hotel Image">
+        </td>
+        <td>
+          <button class="btn btn-outline-primary btn-sm" (click)="selectHotelForEdit(item)">Editar</button>
+          <button class="btn btn-outline-danger btn-sm" (click)="deleteHotel(item._id)">Eliminar</button>
         </td>
       </tr>
     </tbody>
   </table>
 </div>
+

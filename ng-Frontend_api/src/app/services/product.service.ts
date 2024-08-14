@@ -7,11 +7,29 @@ import { Observable } from 'rxjs';
 })
 export class ProductService {
 
-  API_URL: string = 'http://127.0.0.1:5500/';
-  constructor(private httpclient: HttpClient) { }
+  // URL de la API, asegúrate de que sea correcta
+  private readonly API_URL = 'http://localhost:3000/api/hoteles';
 
-  getproducts(): Observable<any> {
-    return this.httpclient.get(this.API_URL).pipe(res=> res);
+  constructor(private http: HttpClient) { }
+
+  // Obtener todos los hoteles
+  getProducts(): Observable<any[]> {
+    return this.http.get<any[]>(this.API_URL);
   }
 
+  // Crear un nuevo hotel
+  createHotel(hotel: any): Observable<any> {
+    return this.http.post<any>(this.API_URL, hotel);
+  }
+
+  // Actualizar un hotel existente
+  updateHotel(id: string, updates: any): Observable<any> {
+    return this.http.put<any>(`${this.API_URL}/${id}`, updates);
+  }
+
+  // Eliminar un hotel
+  deleteHotel(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.API_URL}/${id}`);
+  }
 }
+

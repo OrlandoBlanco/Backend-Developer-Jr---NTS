@@ -21,7 +21,8 @@
     "lib": [
       "ES2022",
       "dom"
-    ]
+    ],
+    "forceConsistentCasingInFileNames": true  // Habilitar la opción sugerida
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
@@ -30,3 +31,4 @@
     "strictTemplates": true
   }
 }
+

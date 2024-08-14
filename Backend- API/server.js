@@ -1,12 +1,30 @@
-require('dotenv').config(); // Cargar variables de entorno desde .env
-
 const express = require('express');
-const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+const cors = require('cors');
 const app = express();
 
+app.use(cors({
+  origin: 'http://localhost:4200', 
+  methods: 'GET,POST,PUT,DELETE',
+  allowedHeaders: 'Content-Type,Authorization'
+}))
+
+
+require('dotenv').config(); // Cargar variables de entorno desde .env
+
+
+
+
 // Usa las variables de entorno
-const PORT = process.env.PORT || 3000; 
-const JWT_SECRET = process.env.JWT_SECRET;
+const PORT = process.env.PORT || 3000;
+const MONGO_URI = process.env.MONGO_URI; 
+
+// Conexión a MongoDB
+mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Conexión a MongoDB exitosa'))
+  .catch(err => console.error('Error de conexión a MongoDB:', err));
+
+
 
 const hotelRoutes = require('./routes/hotel');
 
@@ -49,24 +67,10 @@ const hotels = [
   }
 ];
 
-app.get('/hoteles', (req, res) => {
+app.get('/api/hoteles', (req, res) => {
   res.json(hotels);
 });
-
-// Middleware de autenticación
-app.use((req, res, next) => {
-  const token = req.headers.authorization;
-  if (token) {
-    try {
-      const decoded = jwt.verify(token, JWT_SECRET); // Ahora usamos la clave secreta del .env
-      req.user = decoded;
-    } catch (error) {
-      // Manejo de errores (token inválido, expirado, etc.)
-      return res.status(401).json({ error: 'Token inválido' });
-    }
-  }
-  next();
-});
+ 
 
 // Manejo de rutas no encontradas
 app.use((req, res) => {
