@@ -1,0 +1,62 @@
+<div style="padding: 50px;">
+  <h1 class="text-center">Hoteles Vermont!</h1>
+
+  <!-- Formulario de Filtros -->
+  <form (ngSubmit)="applyFilters()" class="filter-form">
+    <div class="form-group">
+      <label for="name">Nombre:</label>
+      <input id="name" type="text" [(ngModel)]="filters.name" name="name" class="form-control" placeholder="Filtrar por nombre">
+    </div>
+    <div class="form-group">
+      <label for="location">Ubicación:</label>
+      <input id="location" type="text" [(ngModel)]="filters.location" name="location" class="form-control" placeholder="Filtrar por ubicación">
+    </div>
+    <div class="form-group">
+      <label for="minPrice">Precio Mínimo:</label>
+      <input id="minPrice" type="number" [(ngModel)]="filters.minPrice" name="minPrice" class="form-control" placeholder="Precio mínimo">
+    </div>
+    <div class="form-group">
+      <label for="maxPrice">Precio Máximo:</label>
+      <input id="maxPrice" type="number" [(ngModel)]="filters.maxPrice" name="maxPrice" class="form-control" placeholder="Precio máximo">
+    </div>
+    <div class="form-group">
+      <label for="minRating">Calificación Mínima:</label>
+      <input id="minRating" type="number" [(ngModel)]="filters.minRating" name="minRating" class="form-control" placeholder="Calificación mínima">
+    </div>
+    <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
+  </form>
+
+  <!-- Tabla de Hoteles -->
+  <table class="table table-hover">
+    <thead class="table-danger">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Ubicación</th>
+        <th scope="col">Precio</th>
+        <th scope="col">Calificación</th>
+        <th scope="col">Imagen</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of filteredList; let i = index">
+        <th scope="row">{{ item.id }}</th>
+        <td>{{ item.name }}</td>
+        <td>{{ item.location }}</td>
+        <td>
+          <span class="badge bg-success">
+            {{ item.price | currency }}
+          </span>
+        </td>
+        <td>
+          <span class="badge bg-success">
+            {{ item.rating }}
+          </span>
+        </td>
+        <td>
+          <img width="50" height="60" [src]="item.imageUrl" alt="Hotel Image">
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
